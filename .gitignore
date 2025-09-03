@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# YOLO models
+*.pt
+!yolov8n.pt  # Include small model if needed
+
+# Output files
+output/
+*.jpg
+*.png
+*.json
+!test_images/*.jpg
+!test_images/*.png
+
+# Parking configurations (keep these)
+!parking_configs/*.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# Environment variables
+.env
+
+# Logs
+*.log
