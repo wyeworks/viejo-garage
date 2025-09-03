@@ -7,9 +7,8 @@ import cv2
 import argparse
 from datetime import datetime
 import config
-from enhanced_detector import EnhancedVehicleDetector
-from parking_spaces import ParkingLot
 from detector import VehicleDetector
+from parking_spaces import ParkingLot
 
 def process_image(image_path: Path, save_output: bool = True) -> dict:
     print(f"\n{'='*60}")
@@ -27,12 +26,12 @@ def process_image(image_path: Path, save_output: bool = True) -> dict:
     # Initialize parking lot with image-specific configuration
     parking_lot = ParkingLot(str(image_path))
     
-    print(f"\nUsing Enhanced Detection with pre-processing...")
+    print(f"\nDetecting vehicles with enhanced multi-processing...")
     print(f"Processing {len(parking_lot.spaces)} parking spaces...")
     
-    # Use enhanced detector
-    detector = EnhancedVehicleDetector()
-    parking_lot = detector.check_parking_occupancy_enhanced(image, parking_lot)
+    # Use detector
+    detector = VehicleDetector()
+    parking_lot = detector.detect_vehicles(image, parking_lot)
     
     # Get summary
     summary = parking_lot.get_summary()
@@ -47,9 +46,8 @@ def process_image(image_path: Path, save_output: bool = True) -> dict:
     if summary['occupied_spaces']:
         print(f"  Occupied spaces: {', '.join(summary['occupied_spaces'])}")
     
-    # Draw detections on image using regular detector for visualization
-    regular_detector = VehicleDetector()
-    result_image = regular_detector.draw_detections(image, [], parking_lot)
+    # Draw detections on image
+    result_image = detector.draw_detections(image, parking_lot)
     
     # Save output if requested
     if save_output:
@@ -57,13 +55,9 @@ def process_image(image_path: Path, save_output: bool = True) -> dict:
         cv2.imwrite(str(output_path), result_image)
         print(f"\nOutput saved to: {output_path}")
         
-        # Save processed versions for debugging
-        processed = detector.preprocess_image(image)
-        for name, proc_img in processed.items():
-            if name != 'original':
-                debug_path = config.OUTPUT_DIR / f"{image_path.stem}_{name}.jpg"
-                cv2.imwrite(str(debug_path), proc_img)
-                print(f"Debug image saved: {debug_path.name}")
+        # Save debug images if needed
+        if config.DEBUG:
+            detector.save_debug_images(image, str(config.OUTPUT_DIR / image_path.stem))
         
         # Save JSON output
         json_output = {
@@ -86,7 +80,7 @@ def process_image(image_path: Path, save_output: bool = True) -> dict:
     }
 
 def main():
-    parser = argparse.ArgumentParser(description="Enhanced Garage Parking Space Detection")
+    parser = argparse.ArgumentParser(description="Smart Garage Parking Space Detection")
     parser.add_argument("image", nargs="?", help="Path to image file")
     parser.add_argument("--no-save", action="store_true",
                        help="Don't save output files")
