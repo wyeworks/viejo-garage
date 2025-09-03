@@ -1,0 +1,23 @@
+{
+  "image_path": "test_images/IMG_6591.jpg",
+  "image_size": {
+    "width": 3024,
+    "height": 4032
+  },
+  "spaces": [
+    {
+      "space_id": "P1",
+      "x": 90,
+      "y": 1678,
+      "width": 1416,
+      "height": 1668
+    },
+    {
+      "space_id": "P2",
+      "x": 1522,
+      "y": 1234,
+      "width": 1471,
+      "height": 1537
+    }
+  ]
+}
